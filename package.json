@@ -1,0 +1,11 @@
+{
+  "name": "meeting-bot",
+  "version": "1.0.0",
+  "description": "Record audio and video tracks of each peer in a meeting",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
