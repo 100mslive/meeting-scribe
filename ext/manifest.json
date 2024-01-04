@@ -1,0 +1,26 @@
+{
+    "name": "Video Recorder",
+    "version": "1.0.0",
+    "description": "record video and audio tracks",
+    "manifest_version": 3,
+    "author": "Shubham Prasad",
+    "action": {
+        "default_title": "Video Recorder"
+    },
+    "content_scripts": [{
+        "all_frames": true,
+        "exclude_matches": [],
+        "js": ["sw.js"],
+        "matches": ["<all_urls>"],
+        "run_at": "document_end",
+        "world": "MAIN"
+      }
+    ],
+    "externally_connectable": {
+      "matches": ["https://*/*"]
+    },
+    "background": {
+        "service_worker": "background.js"
+    },
+    "permissions": ["activeTab", "tabs", "webNavigation", "scripting", "storage", "downloads"]
+}
