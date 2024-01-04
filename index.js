@@ -1,4 +1,5 @@
 import puppeteer from "puppeteer-core";
+import { Command } from "commander";
 
 import fs from 'fs';
 import path from 'path';
@@ -51,8 +52,17 @@ function appendFileContent(sourceFilePath, targetFilePath) {
 }
 
 (async () => {
-  const args = process.argv.slice(2)
-  const meetingLink = args[0]
+  const program = new Command();
+  program
+    .name('meeting-bot')
+    .description('Record audio and video tracks of each peer in a meeting');
+
+  program
+    .option('-u, --url <meeting_url>', 'meeting url to join')
+
+  program.parse()
+  const options = program.opts()
+  const meetingLink = options.url;
 
   const browser = await puppeteer.launch({
     executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
