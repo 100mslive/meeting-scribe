@@ -58,11 +58,13 @@ function appendFileContent(sourceFilePath, targetFilePath) {
     .description('Record audio and video tracks of each peer in a meeting');
 
   program
-    .option('-u, --url <meeting_url>', 'meeting url to join')
+    .requiredOption('-u, --url <meeting_url>', 'meeting url to join')
+    .option('-o, --output_dir <dir>', 'directory to store recordings', process.cwd())
 
   program.parse()
   const options = program.opts()
   const meetingLink = options.url;
+  const outputDir = options.output_dir;
 
   const browser = await puppeteer.launch({
     executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
@@ -106,6 +108,13 @@ function appendFileContent(sourceFilePath, targetFilePath) {
   await page.bringToFront();
   await joinButton.click();
 
-  concatenateFilesInDirectory("/Users/shubham/Downloads/stream_data/track_data/audio/", "./final_audio.webm")
-  concatenateFilesInDirectory("/Users/shubham/Downloads/stream_data/track_data/video/", "./final_video.webm")
+  if (!fs.existsSync(outputDir)){
+      fs.mkdirSync(outputDir);
+  }
+
+  const audioFilePath = path.join(outputDir, 'audio.webm')
+  const videoFilePath = path.join(outputDir, 'video.webm')
+
+  concatenateFilesInDirectory("/Users/shubham/Downloads/stream_data/track_data/audio/", audioFilePath);
+  concatenateFilesInDirectory("/Users/shubham/Downloads/stream_data/track_data/video/", videoFilePath);
 })();
