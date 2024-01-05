@@ -4,7 +4,8 @@
   "description": "Record audio and video tracks of each peer in a meeting",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "node postinstall.js"
   },
   "author": "",
   "type": "module",
@@ -12,6 +13,6 @@
   "dependencies": {
     "chokidar": "^3.5.3",
     "commander": "^11.1.0",
-    "puppeteer-core": "^21.6.1"
+    "puppeteer": "^21.7.0"
   }
 }

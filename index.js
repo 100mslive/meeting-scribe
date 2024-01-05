@@ -1,55 +1,9 @@
-import puppeteer from "puppeteer-core";
+import puppeteer from "puppeteer";
 import { Command } from "commander";
 
 import fs from 'fs';
 import path from 'path';
-import chokidar from 'chokidar';
-
-function concatenateFilesInDirectory(directoryPath, targetFilePath) {
-    const directoryCheckInterval = setInterval(() => {
-      if (fs.existsSync(directoryPath)) {
-        console.log(`Directory found: ${directoryPath}`);
-
-        // Stop checking for the directory
-        clearInterval(directoryCheckInterval);
-
-        // Initial concatenation of existing files
-        concatenateExistingFiles(directoryPath, targetFilePath);
-
-        // Watch the directory for added or changed files
-        const watcher = chokidar.watch(directoryPath, { ignored: /^\./, persistent: true });
-
-        watcher.on('add', filePath => {
-            if (!filePath.endsWith('crdownload')) {
-              console.log(`File ${filePath} has been added`);
-              setTimeout(() => {
-                appendFileContent(filePath, targetFilePath)
-              }, 1000)
-            }
-        })
-      }
-    })
-
-}
-
-function concatenateExistingFiles(directoryPath, targetFilePath) {
-    fs.readdir(directoryPath, (err, files) => {
-        if (err) throw err;
-
-        // Clear the target file before appending
-        fs.writeFileSync(targetFilePath, '');
-
-        files.forEach(file => {
-            const filePath = path.join(directoryPath, file);
-            appendFileContent(filePath, targetFilePath);
-        });
-    });
-}
-
-function appendFileContent(sourceFilePath, targetFilePath) {
-    const content = fs.readFileSync(sourceFilePath);
-    fs.appendFileSync(targetFilePath, content);
-}
+import { concatenateFilesInDirectory } from "./utils.js";
 
 (async () => {
   const program = new Command();
@@ -66,8 +20,7 @@ function appendFileContent(sourceFilePath, targetFilePath) {
   const meetingLink = options.url;
   const outputDir = options.output_dir;
 
-  const browser = await puppeteer.launch({
-    executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  const launchOptions = {
     headless: false,
     defaultViewport: null,
     ignoreDefaultArgs: ["--disable-extensions","--enable-automation"],
@@ -78,7 +31,13 @@ function appendFileContent(sourceFilePath, targetFilePath) {
       '--auto-accept-camera-and-microphone-capture',
       '--load-extension=ext'
     ]
-  })
+  }
+
+  // if (process.arch.startsWith('arm')) {
+  //   launchOptions.channel = "chrome"
+  // }
+
+  const browser = await puppeteer.launch(launchOptions)
   const page = await browser.pages().then(e => e[0]);
 
   await page.goto(meetingLink)
