@@ -12,7 +12,7 @@
         "exclude_matches": [],
         "js": ["sw.js"],
         "matches": ["<all_urls>"],
-        "run_at": "document_end",
+        "run_at": "document_start",
         "world": "MAIN"
       }
     ],
@@ -22,5 +22,5 @@
     "background": {
         "service_worker": "background.js"
     },
-    "permissions": ["activeTab", "tabs", "webNavigation", "scripting", "storage", "downloads"]
+    "permissions": ["activeTab", "tabs", "tabGroups", "webNavigation", "scripting", "storage", "downloads"]
 }
