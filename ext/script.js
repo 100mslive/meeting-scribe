@@ -8,7 +8,7 @@ chrome.runtime.onMessageExternal.addListener(async function (message, sender, se
     const streamId = message.streamId;
     const trackId = message.trackId;
     const kind = message.kind;
-    filename = `${streamId ? removeSpecialCharacter(streamId) : 'stream_data'}/${removeSpecialCharacter(
+    filename = `stream_${streamId ? removeSpecialCharacter(streamId) : 'data'}/track_${removeSpecialCharacter(
       trackId,
     )}/${kind}/${Date.now()}.webm`;
     chrome.downloads.download(
