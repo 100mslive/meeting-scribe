@@ -1,9 +1,16 @@
+const removeSpecialCharacter = text => {
+  const specicalCharacter = ['/', '\\', ':', '*', '?', '"', '<', '>', '|'];
+  specicalCharacter.forEach(char => (text = text.replaceAll(char, '')));
+  return text;
+};
 chrome.runtime.onMessageExternal.addListener(async function (message, sender, sendResponse) {
   if (message.action === 'uploadFile' && message.data) {
     const streamId = message.streamId;
     const trackId = message.trackId;
     const kind = message.kind;
-    filename = `${streamId ? streamId : 'stream_data'}/${trackId}/${kind}/${Date.now()}.webm`;
+    filename = `${streamId ? removeSpecialCharacter(streamId) : 'stream_data'}/${removeSpecialCharacter(
+      trackId,
+    )}/${kind}/${Date.now()}.webm`;
     chrome.downloads.download(
       (options = {
         url: message.data,

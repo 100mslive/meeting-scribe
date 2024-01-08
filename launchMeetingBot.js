@@ -3,7 +3,7 @@ import UserPreferencesPlugin from 'puppeteer-extra-plugin-user-preferences';
 import { Command } from 'commander';
 import { PageAccess } from './adapter/PageAccess.js';
 import { DOWNLOAD_DIRECTORY } from './constant.js';
-import { wait } from './common.js';
+import { removeSpecialCharacter, wait } from './common.js';
 import { concatenateFilesInDirectory } from './AVFileCreator.js';
 
 import fs from 'fs';
@@ -91,12 +91,18 @@ export const launchMeetingBot = async entryPoint => {
     }
     if (!manageAVFilesName[data.trackId] && data.action === 'AVTracksAdded') {
       manageAVFilesName[data.trackId] = { kind: data.kind, streamId: data.streamId };
-      const downloadFileDirPath = path.join(outputDir, data.trackId);
+      const downloadFileDirPath = path.join(outputDir, removeSpecialCharacter(data.trackId));
       if (!fs.existsSync(downloadFileDirPath)) {
         fs.mkdirSync(downloadFileDirPath);
       }
       const downloadFilePath = path.join(downloadFileDirPath, `${data.kind}.webm`);
-      const trackFilePath = path.join(path.resolve(), DOWNLOAD_DIRECTORY, data.streamId, data.trackId, data.kind);
+      const trackFilePath = path.join(
+        path.resolve(),
+        DOWNLOAD_DIRECTORY,
+        removeSpecialCharacter(data.streamId),
+        removeSpecialCharacter(data.trackId),
+        data.kind,
+      );
       concatenateFilesInDirectory(trackFilePath, downloadFilePath);
     }
   });
