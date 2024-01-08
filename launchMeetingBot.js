@@ -32,18 +32,20 @@ export const launchMeetingBot = async entryPoint => {
       '-d, --downloads_dir <downloads_dir>',
       'directory used by browser as downloads directory',
       DOWNLOAD_DIRECTORY,
-    );
+    )
+    .option('-h, --headless', 'browser will run in headless mode if this flag is used')
 
   program.parse();
   const options = program.opts();
   const meetingLink = options.url;
   const outputDir = options.output_dir;
   const downloadsDir = options.downloads_dir;
+  const headless = options.headless ? "new" : false;
 
   puppeteer.use(downloadUserLocation(downloadsDir));
   const browser = await puppeteer.launch({
     executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-    headless: false,
+    headless,
     defaultViewport: null,
     ignoreDefaultArgs: ['--disable-extensions', '--enable-automation'],
     args: [
