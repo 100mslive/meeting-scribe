@@ -12,6 +12,11 @@
   "dependencies": {
     "chokidar": "^3.5.3",
     "commander": "^11.1.0",
-    "puppeteer-core": "^21.6.1"
+    "puppeteer-core": "^21.7.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-user-preferences": "^2.4.1"
+  },
+  "devDependencies": {
+    "prettier": "^3.1.1"
   }
 }
