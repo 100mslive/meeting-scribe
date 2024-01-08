@@ -2,15 +2,22 @@
 
 ## Installation
 
+```
 npm i
+```
 
 ## Command to run
 
-node index.js --url "https://amar-livestream-641.app.100ms.live/streaming/meeting/dcm-zlrx-pee" -o output
+```
+node index.js --url "<meeting_url>" -o "<output_dir>" -d "<downloads_dir>"
+```
 
-Note: Add your meeting url above
+## Help for CLI
+```
+node index.js --help
+```
 
-## Testing
+## Examples
 
 ### LiveKit
 

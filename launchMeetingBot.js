@@ -9,12 +9,12 @@ import { concatenateFilesInDirectory } from './AVFileCreator.js';
 import fs from 'fs';
 import path from 'path';
 
-function downloadUserLocation() {
+function downloadUserLocation(downloadsDir) {
   return UserPreferencesPlugin({
     userPrefs: {
       download: {
         prompt_for_download: false,
-        default_directory: path.join(path.resolve(), DOWNLOAD_DIRECTORY),
+        default_directory: path.join(path.resolve(), downloadsDir),
       },
     },
   });
@@ -27,14 +27,20 @@ export const launchMeetingBot = async entryPoint => {
 
   program
     .requiredOption('-u, --url <meeting_url>', 'meeting url to join')
-    .option('-o, --output_dir <dir>', 'directory to store recordings', process.cwd());
+    .option('-o, --output_dir <dir>', 'directory to store recordings', process.cwd())
+    .option(
+      '-d, --downloads_dir <downloads_dir>',
+      'directory used by browser as downloads directory',
+      DOWNLOAD_DIRECTORY,
+    );
 
   program.parse();
   const options = program.opts();
   const meetingLink = options.url;
   const outputDir = options.output_dir;
+  const downloadsDir = options.downloads_dir;
 
-  puppeteer.use(downloadUserLocation());
+  puppeteer.use(downloadUserLocation(downloadsDir));
   const browser = await puppeteer.launch({
     executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
     headless: false,
@@ -87,7 +93,7 @@ export const launchMeetingBot = async entryPoint => {
     } catch (e) {}
     if (!data.streamId) {
       // if no streamId sent by the vendor
-      data.streamId = 'stream_data';
+      data.streamId = 'data';
     }
     if (!manageAVFilesName[data.trackId] && data.action === 'AVTracksAdded') {
       manageAVFilesName[data.trackId] = { kind: data.kind, streamId: data.streamId };
@@ -98,9 +104,9 @@ export const launchMeetingBot = async entryPoint => {
       const downloadFilePath = path.join(downloadFileDirPath, `${data.kind}.webm`);
       const trackFilePath = path.join(
         path.resolve(),
-        DOWNLOAD_DIRECTORY,
-        removeSpecialCharacter(data.streamId),
-        removeSpecialCharacter(data.trackId),
+        downloadsDir,
+        `stream_${removeSpecialCharacter(data.streamId)}`,
+        `track_${removeSpecialCharacter(data.trackId)}`,
         data.kind,
       );
       concatenateFilesInDirectory(trackFilePath, downloadFilePath);
