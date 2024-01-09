@@ -18,7 +18,7 @@ function downloadUserLocation(downloadsDir) {
     userPrefs: {
       download: {
         prompt_for_download: false,
-        default_directory: path.join(downloadsDir),
+        default_directory: downloadsDir,
       },
     },
   });
@@ -52,8 +52,7 @@ export const launchMeetingBot = async entryPoint => {
 
   puppeteer.use(downloadUserLocation(downloadsDir));
   const extensionPath = path.join(__dirname, 'ext');
-  const browser = await puppeteer.launch({
-    executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+  const launchOptions = {
     headless,
     defaultViewport: null,
     ignoreDefaultArgs: ['--disable-extensions', '--enable-automation'],
@@ -64,22 +63,45 @@ export const launchMeetingBot = async entryPoint => {
       '--auto-accept-camera-and-microphone-capture',
       `--load-extension=${extensionPath}`,
     ],
-  });
+  };
+
+  // Use installed chrome for M1, use puppeteer chrome for testing otherwise
+  if (process.arch.startsWith('arm')) {
+    launchOptions.channel = 'chrome';
+  }
+
+  let browser;
+  try {
+    browser = await puppeteer.launch(launchOptions);
+  } catch (e) {
+    // This error should ideally come if chrome is not installed on M1 mac
+    // For x64 arch, puppeteer's chrome-for-testing should work
+    console.error(
+      'Could not launch chrome on your machine. Please check if chrome is properly installed on your system.',
+    );
+    process.exit(1)
+  }
+
   // wait for browser to load
   await wait(2000);
+
   // Find the extension
   const targets = browser.targets();
   const extensionTarget = targets.find(target => {
     return target.type() === 'service_worker';
   });
+
   // Extract the URL
   const extensionURL = extensionTarget.url();
   const urlSplit = extensionURL.split('/');
   const extensionID = urlSplit[2];
+
   // Define the extension page
   const extensionEndURL = 'index.html';
-  // const extPage = await browser.pages().then(e => e[0]);
-  const extPage = await browser.newPage();
+
+  // Select existing page when browser opens instead of creating a new page
+  const extPage = await browser.pages().then(e => e[0]);
+
   //Navigate to the page
   await extPage.goto(`chrome-extension://${extensionID}/${extensionEndURL}`);
 
@@ -111,7 +133,6 @@ export const launchMeetingBot = async entryPoint => {
       }
       const downloadFilePath = path.join(downloadFileDirPath, `${data.kind}.webm`);
       const trackFilePath = path.join(
-        path.resolve(),
         downloadsDir,
         `stream_${removeSpecialCharacter(data.streamId)}`,
         `track_${removeSpecialCharacter(data.trackId)}`,
