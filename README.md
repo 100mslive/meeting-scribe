@@ -4,17 +4,18 @@
 
 ```
 npm i
+npm i -g .
 ```
 
 ## Command to run
 
 ```
-node index.js --url "<meeting_url>" -o "<output_dir>" -d "<downloads_dir>"
+meeting-bot --url "<meeting_url>"
 ```
 
 ## Help for CLI
 ```
-node index.js --help
+meeting-bot --help
 ```
 
 ## Examples
