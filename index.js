@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { BaseEntry } from './adapter/BaseEntry.js';
 import { launchMeetingBot } from './launchMeetingBot.js';
 
