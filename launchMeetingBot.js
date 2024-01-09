@@ -37,14 +37,20 @@ export const launchMeetingBot = async entryPoint => {
       'directory used by browser as downloads directory',
       DEFAULT_DOWNLOADS_DIR,
     )
-    .option('-h, --headless', 'browser will run in headless mode if this flag is used');
+    .option(
+      '-i, --interactive',
+      'browser will open the meeting link, but not try to automatically join the call. This option allows the ' +
+        'user to join the call after logging in or to perform other required UI actions needed before joining the ' +
+        'call. This is useful for vendors for which we do not have automated adapters yet.',
+    );
 
   program.parse();
   const options = program.opts();
   const meetingLink = options.url;
   const outputDir = options.output_dir;
   const downloadsDir = options.downloads_dir;
-  const headless = options.headless ? 'new' : false;
+  const interactiveModeEnabled = options.interactive;
+  const headless = interactiveModeEnabled ? false : 'new';
 
   // create tmp directories
   createDirIfNotExists(outputDir);
@@ -79,7 +85,7 @@ export const launchMeetingBot = async entryPoint => {
     console.error(
       'Could not launch chrome on your machine. Please check if chrome is properly installed on your system.',
     );
-    process.exit(1)
+    process.exit(1);
   }
 
   // wait for browser to load
@@ -113,9 +119,11 @@ export const launchMeetingBot = async entryPoint => {
   });
   await page.goto(meetingLink);
 
-  const pageAccess = new PageAccess(page);
-  entryPoint.setPageAccess(pageAccess);
-  await entryPoint.load();
+  if (!interactiveModeEnabled) {
+    const pageAccess = new PageAccess(page);
+    entryPoint.setPageAccess(pageAccess);
+    await entryPoint.load();
+  }
 
   await page.exposeFunction('__100ms_onMessageReceivedEvent', data => {
     try {
