@@ -18,7 +18,7 @@ function downloadUserLocation(downloadsDir) {
     userPrefs: {
       download: {
         prompt_for_download: false,
-        default_directory: path.join(downloadsDir),
+        default_directory: downloadsDir,
       },
     },
   });
