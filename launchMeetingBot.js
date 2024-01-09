@@ -2,12 +2,16 @@ import puppeteer from 'puppeteer-extra';
 import UserPreferencesPlugin from 'puppeteer-extra-plugin-user-preferences';
 import { Command } from 'commander';
 import { PageAccess } from './adapter/PageAccess.js';
-import { DOWNLOAD_DIRECTORY } from './constant.js';
-import { removeSpecialCharacter, wait } from './common.js';
+import { DEFAULT_DOWNLOADS_DIR, DEFAULT_OUTPUT_DIR } from './constant.js';
+import { removeSpecialCharacter, wait, createDirIfNotExists } from './common.js';
 import { concatenateFilesInDirectory } from './AVFileCreator.js';
 
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 function downloadUserLocation(downloadsDir) {
   return UserPreferencesPlugin({
@@ -26,23 +30,28 @@ export const launchMeetingBot = async entryPoint => {
   program.name('meeting-bot').description('Record audio and video tracks of each peer in a meeting');
 
   program
-    .requiredOption('-u, --url <meeting_url>', 'meeting url to join')
-    .option('-o, --output_dir <dir>', 'directory to store recordings', process.cwd())
+    .requiredOption('-u, --url <meeting_url>', 'meeting url to join (required)')
+    .option('-o, --output_dir <dir>', 'directory to store recordings', DEFAULT_OUTPUT_DIR)
     .option(
       '-d, --downloads_dir <downloads_dir>',
       'directory used by browser as downloads directory',
-      DOWNLOAD_DIRECTORY,
+      DEFAULT_DOWNLOADS_DIR,
     )
-    .option('-h, --headless', 'browser will run in headless mode if this flag is used')
+    .option('-h, --headless', 'browser will run in headless mode if this flag is used');
 
   program.parse();
   const options = program.opts();
   const meetingLink = options.url;
   const outputDir = options.output_dir;
   const downloadsDir = options.downloads_dir;
-  const headless = options.headless ? "new" : false;
+  const headless = options.headless ? 'new' : false;
+
+  // create tmp directories
+  createDirIfNotExists(outputDir);
+  createDirIfNotExists(downloadsDir);
 
   puppeteer.use(downloadUserLocation(downloadsDir));
+  const extensionPath = path.join(__dirname, 'ext');
   const browser = await puppeteer.launch({
     executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
     headless,
@@ -53,7 +62,7 @@ export const launchMeetingBot = async entryPoint => {
       '--start-maximized',
       '--no-default-browser-check',
       '--auto-accept-camera-and-microphone-capture',
-      '--load-extension=ext',
+      `--load-extension=${extensionPath}`,
     ],
   });
   // wait for browser to load
@@ -84,11 +93,8 @@ export const launchMeetingBot = async entryPoint => {
 
   const pageAccess = new PageAccess(page);
   entryPoint.setPageAccess(pageAccess);
-  // js me global variable ----
   await entryPoint.load();
-  if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir);
-  }
+
   await page.exposeFunction('__100ms_onMessageReceivedEvent', data => {
     try {
       data = JSON.parse(data);
