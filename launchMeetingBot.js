@@ -63,13 +63,24 @@ export const launchMeetingBot = async entryPoint => {
       '--auto-accept-camera-and-microphone-capture',
       `--load-extension=${extensionPath}`,
     ],
-  }
+  };
 
   // Use installed chrome for M1, use puppeteer chrome for testing otherwise
   if (process.arch.startsWith('arm')) {
-    launchOptions.channel = "chrome"
+    launchOptions.channel = 'chrome';
   }
-  const browser = await puppeteer.launch(launchOptions);
+
+  let browser;
+  try {
+    browser = await puppeteer.launch(launchOptions);
+  } catch (e) {
+    // This error should ideally come if chrome is not installed on M1 mac
+    // For x64 arch, puppeteer's chrome-for-testing should work
+    console.error(
+      'Could not launch chrome on your machine. Please check if chrome is properly installed on your system.',
+    );
+    process.exit(1)
+  }
 
   // wait for browser to load
   await wait(2000);
