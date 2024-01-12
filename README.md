@@ -49,6 +49,8 @@ After installation, you can run Meeting-Scribe from any directory using the foll
 meeting-scribe -u https://amar-livestream-641.app.100ms.live/streaming/meeting/dcm-zlrx-pee -va 100ms
 ```
 
+**Note**: Above is a sample meeting url, please login to [100ms](https://dashboard.100ms.live/) to create your own meeting room.
+
 OR, just run the `index.js` file if you skipped the optional step 4. above
 
 ```bash
