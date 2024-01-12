@@ -14,7 +14,7 @@ To setup meeting-scribe for development, follow these steps:
    ```
 4. Install the tool itself (Optional):
    ```bash
-   npm install .
+   npm install -g .
    ```
 
 ## Usage
