@@ -13,9 +13,9 @@ const start = async () => {
   program
     .requiredOption('-u, --url <meeting_url>', 'meeting url to join (required)')
     .option(
-      '-vk, --vendor-key <vendor-key>',
-      'vendor object file, it needs to match with the class name of external file or default supported key.' + 
-      'Default supported key are 100ms, livekit',
+      '-va, --vendor-adapter <vendor-adapter>',
+      'vendor object file, it needs to match with the class name of external file or default supported adapter.' + 
+      'Default supported adapter are 100ms, livekit',
     )
     .option('-f, --loader-file <loader-file>', 'external loader file location, it need to have a class')
     .option('-o, --output-dir <dir>', 'directory to store recordings', DEFAULT_OUTPUT_DIR)
@@ -34,12 +34,11 @@ const start = async () => {
   program.parse();
   const options = program.opts();
   const execution_location = options.loaderFile;
-  options.interactive = typeof options.vendorKey === 'undefined';
   if (fs.existsSync(execution_location)) {
     const externalPoint = await import(execution_location);
     // reading from outer file
-    if (externalPoint.default && externalPoint.default[options.vendorKey]) {
-      const entryPoint = new externalPoint.default[options.vendorKey]();
+    if (externalPoint.default && externalPoint.default[options.vendorAdapter]) {
+      const entryPoint = new externalPoint.default[options.vendorAdapter]();
       await launchMeetingScribe(entryPoint, options);
     } else {
       // if no loader found
@@ -48,11 +47,12 @@ const start = async () => {
     }
     return;
   } 
-  if (options.vendorKey && loaders[options.vendorKey]) {
-    const entryPoint = new loaders[options.vendorKey]();
+  if (options.vendorAdapter && loaders[options.vendorAdapter]) {
+    const entryPoint = new loaders[options.vendorAdapter]();
     await launchMeetingScribe(entryPoint, options);
     return;
   }
+  options.interactive = true;
   await launchMeetingScribe(null, options);
 };
 
