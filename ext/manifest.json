@@ -1,11 +1,11 @@
 {
-  "name": "Video Recorder",
+  "name": "Meeting Scribe",
   "version": "1.0.0",
-  "description": "record video and audio tracks",
+  "description": "record webrtc video and audio tracks",
   "manifest_version": 3,
-  "author": "Shubham Prasad",
+  "author": "100ms, Inc",
   "action": {
-    "default_title": "Video Recorder"
+    "default_title": "Video/Audio Recorder"
   },
   "content_scripts": [
     {
