@@ -1,5 +1,5 @@
 {
-  "name": "meeting-scribe",
+  "name": "@100mslive/meeting-scribe",
   "version": "0.0.1-alpha.0",
   "description": "Record audio and video tracks of each peer in a meeting",
   "main": "index.js",
