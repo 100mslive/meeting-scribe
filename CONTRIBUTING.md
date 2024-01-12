@@ -31,3 +31,7 @@ OR, if you skipped the optional step 4. above
 ```bash
 node index.js --url <MEETING_URL>
 ```
+
+## Issues and Feature Requests
+
+Please use the respective templates for raising bugs and feature requests.
