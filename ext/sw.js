@@ -1,6 +1,7 @@
 const trackRecorders = {};
 const trackRecordedData = {};
 const storeFiles = {};
+// use it when extension is used solely
 let extensionId = 'kcblbddelnmgapihhgimefdhpfgbpndl';
 
 const addTrack = (track, streamId) => {

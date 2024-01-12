@@ -1,5 +1,5 @@
 // this what user needs to do
-class MeetingBot100ms {
+class MeetingScribe100ms {
   pageAccess;
   setPageAccess(pageAccess) {
     this.pageAccess = pageAccess;
@@ -13,5 +13,5 @@ class MeetingBot100ms {
 }
 
 module.exports = {
-  MeetingBot100ms,
+  '100ms-example': MeetingScribe100ms,
 };

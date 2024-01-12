@@ -1,24 +1,26 @@
 #!/usr/bin/env node
 import fs from 'fs';
 import { DEFAULT_DOWNLOADS_DIR, DEFAULT_OUTPUT_DIR } from './constant.js';
-import { launchMeetingBot } from './launchMeetingBot.js';
+import { launchMeetingScribe } from './launchMeetingScribe.js';
 
 import { Command } from 'commander';
+import { loaders } from './core/loader.js';
 
 const start = async () => {
   const program = new Command();
-  program.name('meeting-bot').description('Record audio and video tracks of each peer in a meeting');
+  program.name('meeting-scribe').description('Record audio and video tracks of each peer in a meeting');
 
   program
     .requiredOption('-u, --url <meeting_url>', 'meeting url to join (required)')
-    .requiredOption('-exe, --external-file <external-file>', 'external file location, it need to have a class')
-    .requiredOption(
-      '-v, --vendor <vendor>',
-      'vendor object file, it needs to match with the class name of external file.',
-    )
-    .option('-o, --output_dir <dir>', 'directory to store recordings', DEFAULT_OUTPUT_DIR)
     .option(
-      '-d, --downloads_dir <downloads_dir>',
+      '-vk, --vendor-key <vendor-key>',
+      'vendor object file, it needs to match with the class name of external file or default supported key.' + 
+      'Default supported key are 100ms, livekit',
+    )
+    .option('-f, --loader-file <loader-file>', 'external loader file location, it need to have a class')
+    .option('-o, --output-dir <dir>', 'directory to store recordings', DEFAULT_OUTPUT_DIR)
+    .option(
+      '-d, --downloads-dir <downloads-dir>',
       'directory used by browser as downloads directory',
       DEFAULT_DOWNLOADS_DIR,
     )
@@ -31,19 +33,27 @@ const start = async () => {
 
   program.parse();
   const options = program.opts();
-  const execution_location = options.externalFile;
+  const execution_location = options.loaderFile;
+  options.interactive = typeof options.vendorKey === 'undefined';
   if (fs.existsSync(execution_location)) {
     const externalPoint = await import(execution_location);
     // reading from outer file
-    if (externalPoint.default && externalPoint.default[options.vendor]) {
-      const entryPoint = new externalPoint.default[options.vendor]();
-      await launchMeetingBot(entryPoint, options);
+    if (externalPoint.default && externalPoint.default[options.vendorKey]) {
+      const entryPoint = new externalPoint.default[options.vendorKey]();
+      await launchMeetingScribe(entryPoint, options);
     } else {
-      await launchMeetingBot(null, options);
+      // if no loader found
+      options.interactive = true;
+      await launchMeetingScribe(null, options);
     }
-  } else {
-    await launchMeetingBot(null, options);
+    return;
+  } 
+  if (options.vendorKey && loaders[options.vendorKey]) {
+    const entryPoint = new loaders[options.vendorKey]();
+    await launchMeetingScribe(entryPoint, options);
+    return;
   }
+  await launchMeetingScribe(null, options);
 };
 
 start();

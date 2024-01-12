@@ -1,5 +1,5 @@
 // this what user needs to do
-class MeetingBotLiveKit {
+class MeetingScribeLiveKit {
   pageAccess;
   setPageAccess(pageAccess) {
     this.pageAccess = pageAccess;
@@ -13,5 +13,5 @@ class MeetingBotLiveKit {
 }
 
 module.exports = {
-  MeetingBotLiveKit,
+  'livekit-example': MeetingScribeLiveKit,
 };

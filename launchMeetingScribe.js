@@ -21,11 +21,11 @@ function downloadUserLocation(downloadsDir) {
   });
 }
 
-export const launchMeetingBot = async (entryPoint, options) => {
+export const launchMeetingScribe = async (entryPoint, options) => {
   const manageAVFilesName = {};
   const meetingLink = options.url;
-  const outputDir = options.output_dir;
-  const downloadsDir = options.downloads_dir;
+  const outputDir = options.outputDir;
+  const downloadsDir = options.downloadsDir;
   const interactiveModeEnabled = options.interactive;
   const headless = interactiveModeEnabled ? false : 'new';
 
