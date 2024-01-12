@@ -1,6 +1,6 @@
 {
   "name": "meeting-scribe",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Record audio and video tracks of each peer in a meeting",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "author": "",
   "type": "module",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "dependencies": {
     "chokidar": "^3.5.3",
     "commander": "^11.1.0",
