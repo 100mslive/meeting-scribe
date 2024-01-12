@@ -4,9 +4,9 @@ Meeting-Scribe is a powerful, yet experimental, tool designed for joining WebRTC
 
 **NOTE**: This tool is still in experimental stage, and hence not meant for production usage yet. Things may break, and the interface may change without supporting backward compatibility.
 
-## Prerequisite
+## Prerequisites
 
-- Need to have chrome install on your system
+- Need to have chrome installed on your system
 
 ## Features
 
