@@ -6,6 +6,12 @@ name: publish-to-npm
 on:
   release:
     types: [created]
+  workflow_dispatch:
+    inputs:
+      publishFlag:
+        description: 'which version to publish eg: alpha, beta, latest, experimental'
+        required: true
+        default: 'alpha'
 
 jobs:
   build:
@@ -28,6 +34,7 @@ jobs:
           node-version: 18
           registry-url: https://registry.npmjs.org/
       - run: npm ci
-      - run: npm publish
+      - run: npm publish --tag $PUBLISH_FLAG --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          PUBLISH_FLAG: ${{ github.event.inputs.publishFlag }}
