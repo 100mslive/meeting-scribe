@@ -1,8 +1,5 @@
 import puppeteer from 'puppeteer-extra';
 import UserPreferencesPlugin from 'puppeteer-extra-plugin-user-preferences';
-import { Command } from 'commander';
-import { PageAccess } from './adapter/PageAccess.js';
-import { DEFAULT_DOWNLOADS_DIR, DEFAULT_OUTPUT_DIR } from './constant.js';
 import { removeSpecialCharacter, wait, createDirIfNotExists } from './common.js';
 import { concatenateFilesInDirectory } from './AVFileCreator.js';
 
@@ -24,28 +21,8 @@ function downloadUserLocation(downloadsDir) {
   });
 }
 
-export const launchMeetingBot = async entryPoint => {
+export const launchMeetingBot = async (entryPoint, options) => {
   const manageAVFilesName = {};
-  const program = new Command();
-  program.name('meeting-bot').description('Record audio and video tracks of each peer in a meeting');
-
-  program
-    .requiredOption('-u, --url <meeting_url>', 'meeting url to join (required)')
-    .option('-o, --output_dir <dir>', 'directory to store recordings', DEFAULT_OUTPUT_DIR)
-    .option(
-      '-d, --downloads_dir <downloads_dir>',
-      'directory used by browser as downloads directory',
-      DEFAULT_DOWNLOADS_DIR,
-    )
-    .option(
-      '-i, --interactive',
-      'browser will open the meeting link, but not try to automatically join the call. This option allows the ' +
-        'user to join the call after logging in or to perform other required UI actions needed before joining the ' +
-        'call. This is useful for vendors for which we do not have automated adapters yet.',
-    );
-
-  program.parse();
-  const options = program.opts();
   const meetingLink = options.url;
   const outputDir = options.output_dir;
   const downloadsDir = options.downloads_dir;
@@ -71,10 +48,8 @@ export const launchMeetingBot = async entryPoint => {
     ],
   };
 
-  // Use installed chrome for M1, use puppeteer chrome for testing otherwise
-  if (process.arch.startsWith('arm')) {
-    launchOptions.channel = 'chrome';
-  }
+  // Currently it is necassay to have chrome installed on system.
+  launchOptions.channel = 'chrome';
 
   let browser;
   try {
@@ -119,10 +94,9 @@ export const launchMeetingBot = async entryPoint => {
   });
   await page.goto(meetingLink);
 
-  if (!interactiveModeEnabled) {
-    const pageAccess = new PageAccess(page);
-    entryPoint.setPageAccess(pageAccess);
-    await entryPoint.load();
+  if (!interactiveModeEnabled && entryPoint) {
+    entryPoint.setPageAccess(page);
+    await entryPoint.onLoad();
   }
 
   await page.exposeFunction('__100ms_onMessageReceivedEvent', data => {
