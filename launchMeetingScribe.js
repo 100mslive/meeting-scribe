@@ -94,7 +94,7 @@ export const launchMeetingScribe = async (entryPoint, options) => {
   });
   await page.goto(meetingLink);
 
-  if (!interactiveModeEnabled && entryPoint) {
+  if (entryPoint) {
     entryPoint.setPageAccess(page);
     await entryPoint.onLoad();
   }
