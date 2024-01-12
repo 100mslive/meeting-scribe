@@ -1,6 +1,6 @@
-# Meeting-Scribe
+# meeting-scribe
 
-Meeting-Scribe is a powerful, yet experimental, tool designed for joining WebRTC-based calls seamlessly. Its primary functionality includes recording individual audio and video tracks during online meetings. Currently in its developmental phase, it offers a glimpse into the potential of automated meeting recordings. This tool is best suited for developers, tech enthusiasts, and early adopters who are interested in exploring new technologies in the realm of online communication.
+meeting-scribe is a powerful, yet experimental, tool designed for joining WebRTC-based calls seamlessly. Its primary functionality includes recording individual audio and video tracks during online meetings. Currently in its developmental phase, it offers a glimpse into the potential of automated meeting recordings. This tool is best suited for developers, tech enthusiasts, and early adopters who are interested in exploring new technologies in the realm of online communication.
 
 **NOTE**: This tool is still in experimental stage, and hence not meant for production usage yet. Things may break, and the interface may change without supporting backward compatibility.
 
@@ -22,28 +22,26 @@ Meeting-Scribe is a powerful, yet experimental, tool designed for joining WebRTC
 
 ## Installation
 
-To install Meeting-Scribe, follow these steps:
+To install meeting-scribe, follow these steps:
 
-1. Clone the repository:
+1. Install using npm:
    ```bash
-   git clone git@github.com:100mslive/meeting-scribe.git
+   npm install -g @100mslive/meeting-scribe
    ```
-2. Change to the directory:
+   OR, yarn:
    ```bash
-   cd meeting-scribe
+   yarn global add @100mslive/meeting-scribe
    ```
-3. Install dependencies:
+   OR, pnpm:
    ```bash
-   npm install
+   pnpm add -g @100mslive/meeting-scribe
    ```
-4. Install the tool itself (Optional):
-   ```bash
-   npm install .
-   ```
+
+
 
 ## Usage
 
-After installation, you can run Meeting-Scribe from any directory using the following command:
+After installation, you can run meeting-scribe from any directory using the following command:
 
 ```bash
 meeting-scribe -u https://amar-livestream-641.app.100ms.live/streaming/meeting/dcm-zlrx-pee -va 100ms
@@ -51,11 +49,6 @@ meeting-scribe -u https://amar-livestream-641.app.100ms.live/streaming/meeting/d
 
 **Note**: Above is a sample meeting url, please login to [100ms](https://dashboard.100ms.live/) to create your own meeting room.
 
-OR, just run the `index.js` file if you skipped the optional step 4. above
-
-```bash
-node index.js --url <MEETING_URL>
-```
 
 ### Command Line Options
 
@@ -122,7 +115,7 @@ meeting-scribe --url <YOUR_VENDOR_MEETING_URL> -f <FILE_PATH> -va <VENDOR_CODE_C
 
 ## Support & Contributions
 
-For support, feature requests, or contributions, please open an issue or pull request in the GitHub repository.
+For support, feature requests, or contributions, please open an issue or pull request in the GitHub repository. Check [CONTRIBUTING.md](CONTRIBUTING.md) for setup instructions.
 
 ## License
 
